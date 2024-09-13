@@ -21,6 +21,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@types/node": "^22.5.4",
 		"@types/png-chunks-encode": "^1.0.2",
 		"@types/png-chunks-extract": "^1.0.2",
 		"png-chunk-itxt": "^1.0.0",
