@@ -17,7 +17,6 @@ export const actions = {
 			});
 		}
 		const { fileToUpload } = formData as { fileToUpload: File };
-		console.log(fileToUpload.name)
 
 		// Write the to the static folder
 		writeFileSync(
