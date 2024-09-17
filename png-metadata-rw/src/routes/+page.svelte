@@ -38,7 +38,11 @@ export let form: ActionData;
             <p>埋め込まれていたテキスト：{form.embeddedText}</p>
         {/if}
         {#if form?.downloadLink}
-            <a href="{form.downloadLink}" download>Download</a>
+            <a href="{form.downloadLink}" download>
+                <button>
+                    Download
+                </button>
+            </a>
         {/if}
     {/if}
 </div>
