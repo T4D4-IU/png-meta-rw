@@ -1,7 +1,7 @@
 <script lang="ts">
-import { enhance } from "$app/forms";
-import { onMount } from "svelte";
+import type { PageData, ActionData } from './$types';
 
+export let form: ActionData;
 
 </script>
 
@@ -14,7 +14,7 @@ import { onMount } from "svelte";
         <p>2.2: PNGファイルのiTXtチャンクに埋め込まれた文字列を読み取りたい場合は空白のままクリック。</p>
         <p>3: 少し待つとPNGファイル(フォームに文字列を入力した場合はiTXtチャンクに文字列が埋め込まれた状態)と、iTXtチャンク内の文字列が出力されます。</p>
     </div>
-    <form method="post" use:enhance enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data">
         <div class="group">
             <label for="file">pngファイルをアップロード</label>
             <input
@@ -33,7 +33,12 @@ import { onMount } from "svelte";
         </div>
         <button type="submit">送信</button>
     </form>
-    <div>
-        <p>埋め込まれていたテキスト</p>
-    </div>
+    {#if form?.success}
+        {#if form.embeddedText}
+            <p>埋め込まれていたテキスト：{form.embeddedText}</p>
+        {/if}
+        {#if form?.downloadLink}
+            <a href="{form.downloadLink}">Download</a>
+        {/if}
+    {/if}
 </div>
