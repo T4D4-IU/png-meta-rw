@@ -1,6 +1,8 @@
-<script>
+<script lang="ts">
 import { enhance } from "$app/forms";
 import { onMount } from "svelte";
+
+
 </script>
 
 
@@ -25,6 +27,7 @@ import { onMount } from "svelte";
             <input
                 type="text"
                 name="text"
+                id="text"
                 placeholder="埋め込みたい文字列を入力"
             />
         </div>
