@@ -2,16 +2,15 @@ import { writeFileSync } from "node:fs";
 import fs from "node:fs";
 import { console } from "node:inspector";
 import { error, fail } from "@sveltejs/kit";
+// packages to use for read/write iTxt chunk
 import { decodeSync, encodeSync } from "png-chunk-itxt";
 import encode from "png-chunks-encode";
-// packages to use for read/write iTxt chunk
 import extract from "png-chunks-extract";
-import type { PageServerLoad } from "./$types";
+import type { PageServerLoad, Actions } from "./$types";
 
 export const actions = {
 	default: async ({ request }) => {
 		const formData = Object.fromEntries(await request.formData());
-		// console.log(formData);
 
 		if (
 			!(formData.fileToUpload as File).name ||
@@ -61,7 +60,7 @@ export const actions = {
 			return {
 				success: true,
 				embeddedText:  text,
-				downloadLink: `static/emvedded_${fileToUpload.name}`
+				downloadLink: `static/embedded_${fileToUpload.name}`
 			};
 		} else {
 
