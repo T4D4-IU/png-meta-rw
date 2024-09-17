@@ -19,3 +19,7 @@ Thumbs.db
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+
+# 自動保存される投稿された画像と加工後の画像の保存されるパス
+/static/saved
