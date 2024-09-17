@@ -25,11 +25,11 @@ export const actions = {
 
 		// Write the to the static folder
 		writeFileSync(
-			`static/${fileToUpload.name}`,
+			`static/saved/${fileToUpload.name}`,
 			Buffer.from(await fileToUpload.arrayBuffer()),
 		);
 
-		const buffer = fs.readFileSync(`static/${fileToUpload.name}`);
+		const buffer = fs.readFileSync(`static/saved/${fileToUpload.name}`);
 		const chunks = extract(buffer);
 
 		let embeddedText = "";
@@ -54,13 +54,13 @@ export const actions = {
 				write_iTxtChunk,
 			);
 
-			const newFilePath = `static/embedded_${fileToUpload.name}`;
+			const newFilePath = `static/saved/embedded_${fileToUpload.name}`;
 			fs.writeFileSync(newFilePath, Buffer.from(encode(chunks)));
 
 			return {
 				success: true,
 				embeddedText:  text,
-				downloadLink: `static/embedded_${fileToUpload.name}`
+				downloadLink: `static/saved/embedded_${fileToUpload.name}`
 			};
 		} else {
 
