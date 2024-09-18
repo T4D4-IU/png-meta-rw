@@ -28,11 +28,11 @@ export const actions = {
 
 		// Write the to the static folder
 		writeFileSync(
-			`src/saved/${fileToUpload.name}`,
+			`src/assets/${fileToUpload.name}`,
 			Buffer.from(await fileToUpload.arrayBuffer()),
 		);
 
-		const buffer = fs.readFileSync(`src/saved/${fileToUpload.name}`);
+		const buffer = fs.readFileSync(`src/assets/${fileToUpload.name}`);
 		const chunks = extract(buffer);
 
 		let embeddedText = "";
@@ -57,13 +57,13 @@ export const actions = {
 				write_iTxtChunk,
 			);
 
-			const newFilePath = `src/saved/embedded_${fileToUpload.name}`;
+			const newFilePath = `src/assets/embedded_${fileToUpload.name}`;
 			fs.writeFileSync(newFilePath, Buffer.from(encode(chunks)));
 
 			return {
 				success: true,
 				embeddedText: text,
-				downloadLink: `src/saved/embedded_${fileToUpload.name}`,
+				downloadLink: `src/assets/embedded_${fileToUpload.name}`,
 			};
 		} else {
 			// iTxt chunkから読み取る
