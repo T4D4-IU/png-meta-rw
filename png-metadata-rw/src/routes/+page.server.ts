@@ -65,21 +65,18 @@ export const actions = {
 				embeddedText: text,
 				downloadLink: `src/assets/embedded_${fileToUpload.name}`,
 			};
-		} else {
-			// iTxt chunkから読み取る
-			const read_iTxtChunk = chunks.find((c) => c.name === "iTXt");
-
-			if (read_iTxtChunk !== undefined) {
-				const iTxtData = decodeSync(read_iTxtChunk.data);
-				embeddedText = iTxtData.text;
-			} else {
-				console.error("iTxtChunk is  undefined");
-			}
-
-			return {
-				success: true,
-				embeddedText: embeddedText,
-			};
 		}
+		// iTxt chunkから読み取る
+		const read_iTxtChunk = chunks.find((c) => c.name === "iTXt");
+		if (read_iTxtChunk !== undefined) {
+			const iTxtData = decodeSync(read_iTxtChunk.data);
+			embeddedText = iTxtData.text;
+		} else {
+			console.error("iTxtChunk is  undefined");
+		}
+		return {
+			success: true,
+			embeddedText: embeddedText,
+		};
 	},
 };
