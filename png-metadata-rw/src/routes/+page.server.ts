@@ -6,7 +6,7 @@ import { error, fail } from "@sveltejs/kit";
 import { decodeSync, encodeSync } from "png-chunk-itxt";
 import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
-import type { PageServerLoad, Actions } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 
 export const actions = {
 	default: async ({ request }) => {
@@ -21,7 +21,10 @@ export const actions = {
 				message: "ファイルをアップロードしてください",
 			});
 		}
-		const { fileToUpload, text } = formData as { fileToUpload: File, text: string };
+		const { fileToUpload, text } = formData as {
+			fileToUpload: File;
+			text: string;
+		};
 
 		// Write the to the static folder
 		writeFileSync(
@@ -59,25 +62,24 @@ export const actions = {
 
 			return {
 				success: true,
-				embeddedText:  text,
-				downloadLink: `src/saved/embedded_${fileToUpload.name}`
+				embeddedText: text,
+				downloadLink: `src/saved/embedded_${fileToUpload.name}`,
 			};
 		} else {
+			// iTxt chunkから読み取る
+			const read_iTxtChunk = chunks.find((c) => c.name === "iTXt");
 
-		// iTxt chunkから読み取る
-		const read_iTxtChunk = chunks.find((c) => c.name === "iTXt");
+			if (read_iTxtChunk !== undefined) {
+				const iTxtData = decodeSync(read_iTxtChunk.data);
+				embeddedText = iTxtData.text;
+			} else {
+				console.error("iTxtChunk is  undefined");
+			}
 
-		if (read_iTxtChunk !== undefined) {
-			const iTxtData = decodeSync(read_iTxtChunk.data);
-			embeddedText = iTxtData.text;
-		} else {
-			console.error("iTxtChunk is  undefined");
+			return {
+				success: true,
+				embeddedText: embeddedText,
+			};
 		}
-
-		return {
-			success: true,
-			embeddedText:  embeddedText,
-		};
-	}
 	},
 };
