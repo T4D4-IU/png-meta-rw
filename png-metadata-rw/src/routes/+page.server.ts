@@ -33,7 +33,6 @@ export const actions = {
 		const buffer = fs.readFileSync(`src/assets/${fileToUpload.name}`);
 		const chunks = extract(buffer);
 
-		let embeddedText = "";
 		// フォームに入力されたテキストがある場合iTxtチャンクに書き込みをする
 		if (text) {
 			// iTxt chunkへ書きこむデータの整形
@@ -65,6 +64,7 @@ export const actions = {
 			};
 		}
 		// iTxt chunkから読み取る
+		let embeddedText = "";
 		const read_iTxtChunk = chunks.find((c) => c.name === "iTXt");
 		if (read_iTxtChunk !== undefined) {
 			const iTxtData = decodeSync(read_iTxtChunk.data);
