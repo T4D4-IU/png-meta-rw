@@ -33,15 +33,20 @@ export let form: ActionData;
         <button type="submit">送信</button>
     </form>
     {#if form?.success}
-        {#if form.embeddedText}
-            <p>埋め込まれていたテキスト：{form.embeddedText}</p>
+        {#if form.success=false}
+            <p>{form.message}</p>
         {/if}
-        {#if form?.downloadLink}
-            <a href="{form.downloadLink}" download>
-                <button>
-                    Download
-                </button>
-            </a>
+        {#if form.success=true}
+            {#if form.embeddedText}
+                <p>埋め込まれていたテキスト：{form.embeddedText}</p>
+            {/if}
+            {#if form?.downloadLink}
+                <a href="{form.downloadLink}" download>
+                    <button>
+                        Download
+                    </button>
+                </a>
+            {/if}
         {/if}
     {/if}
 </div>

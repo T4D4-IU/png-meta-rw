@@ -1,7 +1,5 @@
 import { writeFileSync } from "node:fs";
 import fs from "node:fs";
-import { console } from "node:inspector";
-import { error, fail } from "@sveltejs/kit";
 // packages to use for read/write iTxt chunk
 import { decodeSync, encodeSync } from "png-chunk-itxt";
 import encode from "png-chunks-encode";
@@ -16,10 +14,10 @@ export const actions = {
 			!(formData.fileToUpload as File).name ||
 			(formData.fileToUpload as File).name === "undefined"
 		) {
-			return fail(400, {
-				error: true,
-				message: "ファイルをアップロードしてください",
-			});
+			return {
+				success: false,
+				message: "ファイルが選択されていません",
+			};
 		}
 		const { fileToUpload, text } = formData as {
 			fileToUpload: File;
@@ -72,7 +70,10 @@ export const actions = {
 			const iTxtData = decodeSync(read_iTxtChunk.data);
 			embeddedText = iTxtData.text;
 		} else {
-			console.error("iTxtChunk is  undefined");
+			return {
+				success: false,
+				message: "iTxt chunkが見つかりませんでした",
+			};
 		}
 		return {
 			success: true,
