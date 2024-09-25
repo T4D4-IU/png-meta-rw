@@ -24,13 +24,7 @@ export const actions = {
 			text: string;
 		};
 
-		// Write the to the static folder
-		writeFileSync(
-			`src/assets/${fileToUpload.name}`,
-			Buffer.from(await fileToUpload.arrayBuffer()),
-		);
-
-		const buffer = fs.readFileSync(`src/assets/${fileToUpload.name}`);
+		const buffer = Buffer.from(await fileToUpload.arrayBuffer())
 		const chunks = extract(buffer);
 
 		// フォームに入力されたテキストがある場合iTxtチャンクに書き込みをする
