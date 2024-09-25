@@ -1,10 +1,19 @@
-import { writeFileSync } from "node:fs";
-import fs from "node:fs";
 // packages to use for read/write iTxt chunk
 import { decodeSync, encodeSync } from "png-chunk-itxt";
 import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
 import type { Actions, PageServerLoad } from "./$types";
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { env } from '$env/dynamic/private';
+
+const s3Client = new S3Client({
+	region: 'auto',
+	endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+	credentials: {
+	  accessKeyId: env.R2_ACCESS_KEY_ID,
+	  secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+	},
+  });
 
 export const actions = {
 	default: async ({ request }) => {
@@ -47,15 +56,35 @@ export const actions = {
 				0,
 				write_iTxtChunk,
 			);
+			// const newFilePath = `src/assets/embedded_${fileToUpload.name}`;
+			// fs.writeFileSync(newFilePath, Buffer.from(encode(chunks)));
 
-			const newFilePath = `src/assets/embedded_${fileToUpload.name}`;
-			fs.writeFileSync(newFilePath, Buffer.from(encode(chunks)));
+			// embeddedPngにエンコードしたchunksをBufferオブジェクトに変換し格納する
+			const embeddedPng = Buffer.from(encode(chunks));
+			// embeddedPngをCloudflareR2に保存する
+			const filename = `embedded_${fileToUpload}_${Date.now()}`
 
-			return {
-				success: true,
-				embeddedText: text,
-				downloadLink: `src/assets/embedded_${fileToUpload.name}`,
-			};
+			try {
+				await s3Client.send(
+					new PutObjectCommand({
+						Bucket: env.R2_BUCKET_NAME,
+						Key: filename,
+						Body: embeddedPng,
+						ContentType: 'image/png',
+					})
+				);
+
+				return {
+					success: true,
+					message:  "画像を保存しました",
+					filename: filename,
+				};
+			} catch (err) {
+				return {
+					success: false,
+					message: "画像を保存できませんでした",
+				}
+			}
 		}
 		// iTxt chunkから読み取る
 		let embeddedText = "";
