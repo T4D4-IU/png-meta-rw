@@ -3,19 +3,6 @@ import { decodeSync, encodeSync } from "png-chunk-itxt";
 import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
 import type { Actions, PageServerLoad } from "./$types";
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import dotenv from 'dotenv'
-
-dotenv.config();
-
-const s3Client = new S3Client({
-	region: 'auto',
-	endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-	credentials: {
-		accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
-		secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
-	},
-});
 
 export const actions = {
 	default: async ({ request }) => {
@@ -35,7 +22,7 @@ export const actions = {
 			text: string;
 		};
 
-		const buffer = Buffer.from(await fileToUpload.arrayBuffer())
+		const buffer = Buffer.from(await fileToUpload.arrayBuffer());
 		const chunks = extract(buffer);
 
 		// フォームに入力されたテキストがある場合iTxtチャンクに書き込みをする
@@ -58,36 +45,20 @@ export const actions = {
 				0,
 				write_iTxtChunk,
 			);
-			// const newFilePath = `src/assets/embedded_${fileToUpload.name}`;
-			// fs.writeFileSync(newFilePath, Buffer.from(encode(chunks)));
 
 			// embeddedPngにエンコードしたchunksをBufferオブジェクトに変換し格納する
 			const embeddedPng = Buffer.from(encode(chunks));
 			// embeddedPngをCloudflareR2に保存する
-			const filename = `embedded_${fileToUpload.name}_${Date.now()}`
+			const filename = `embedded_${fileToUpload.name}`;
 
-			try {
-				await s3Client.send(
-					new PutObjectCommand({
-						Bucket: process.env.R2_BUCKET_NAME,
-						Key: filename,
-						Body: embeddedPng,
-						ContentType: 'image/png',
-					})
-				);
-
-				return {
-					success: true,
-					message:  "画像を保存しました",
-					filename: filename,
-				};
-			} catch (err) {
-				return {
-					success: false,
-					message: "画像を保存できませんでした",
-				}
-			}
+			return {
+				success: true,
+				message: "テキストの埋め込みに成功！",
+				filename: filename,
+				png: embeddedPng.toString("base64"),
+			};
 		}
+
 		// iTxt chunkから読み取る
 		let embeddedText = "";
 		const read_iTxtChunk = chunks.find((c) => c.name === "iTXt");

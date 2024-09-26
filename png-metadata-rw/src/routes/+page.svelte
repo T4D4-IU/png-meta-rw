@@ -41,12 +41,13 @@ export let form: ActionData;
                 <p>埋め込まれていたテキスト：{form.embeddedText}</p>
             {/if}
             {#if form?.filename}
-            <p>success!:{form.message}</p>
-                <a href="${form.filename}" download>
-                    <button>
-                        Download
-                    </button>
+            <div>
+                <p>success!:{form.message}</p>
+                <a href="data:image/png;base64,{form.png}" download="{form.filename}">
+                    <button>画像をダウンロード</button>
                 </a>
+            </div>
+            <img src="data:image/png;base64,{form.png}" alt="png" />
             {/if}
         {/if}
     {/if}
