@@ -2,7 +2,6 @@
 import { decodeSync, encodeSync } from "png-chunk-itxt";
 import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
-import type { Actions, PageServerLoad } from "./$types";
 
 export const actions = {
 	default: async ({ request }) => {
