@@ -41,7 +41,7 @@ export let form: ActionData;
                 <p>埋め込まれていたテキスト：{form.embeddedText}</p>
             {/if}
             {#if form?.filename}
-            <p>{form.success}!:{form.message}</p>
+            <p>success!:{form.message}</p>
                 <a href="${form.filename}" download>
                     <button>
                         Download
