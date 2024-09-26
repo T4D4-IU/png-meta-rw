@@ -4,16 +4,18 @@ import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
 import type { Actions, PageServerLoad } from "./$types";
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
-import { env } from '$env/dynamic/private';
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const s3Client = new S3Client({
 	region: 'auto',
-	endpoint: `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+	endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
 	credentials: {
-	  accessKeyId: env.R2_ACCESS_KEY_ID,
-	  secretAccessKey: env.R2_SECRET_ACCESS_KEY,
+		accessKeyId: process.env.R2_ACCESS_KEY_ID || '',
+		secretAccessKey: process.env.R2_SECRET_ACCESS_KEY || '',
 	},
-  });
+});
 
 export const actions = {
 	default: async ({ request }) => {
@@ -62,12 +64,12 @@ export const actions = {
 			// embeddedPngにエンコードしたchunksをBufferオブジェクトに変換し格納する
 			const embeddedPng = Buffer.from(encode(chunks));
 			// embeddedPngをCloudflareR2に保存する
-			const filename = `embedded_${fileToUpload}_${Date.now()}`
+			const filename = `embedded_${fileToUpload.name}_${Date.now()}`
 
 			try {
 				await s3Client.send(
 					new PutObjectCommand({
-						Bucket: env.R2_BUCKET_NAME,
+						Bucket: process.env.R2_BUCKET_NAME,
 						Key: filename,
 						Body: embeddedPng,
 						ContentType: 'image/png',
