@@ -1,4 +1,3 @@
-// packages to use for read/write iTxt chunk
 import { decodeSync, encodeSync } from "png-chunk-itxt";
 import encode from "png-chunks-encode";
 import extract from "png-chunks-extract";
@@ -21,8 +20,7 @@ export const actions = {
 			text: string;
 		};
 
-		const buffer = Buffer.from(await fileToUpload.arrayBuffer());
-		const chunks = extract(buffer);
+		const chunks = extract(Buffer.from(await fileToUpload.arrayBuffer()));
 
 		// フォームに入力されたテキストがある場合iTxtチャンクに書き込みをする
 		if (text) {
@@ -35,7 +33,7 @@ export const actions = {
 					compressionMethod: 0,
 					languageTag: "",
 					translatedKeyword: "",
-					text: text, // TODO フォームで入力した内容をココに入れる
+					text: text,
 				}),
 			};
 			// 最初のIDATチャンクの前にiTXtチャンクを挿入する。
@@ -45,16 +43,11 @@ export const actions = {
 				write_iTxtChunk,
 			);
 
-			// embeddedPngにエンコードしたchunksをBufferオブジェクトに変換し格納する
-			const embeddedPng = Buffer.from(encode(chunks));
-			// embeddedPngをCloudflareR2に保存する
-			const filename = `embedded_${fileToUpload.name}`;
-
 			return {
 				success: true,
 				message: "テキストの埋め込みに成功！",
-				filename: filename,
-				png: embeddedPng.toString("base64"),
+				filename: `embedded_${fileToUpload.name}`,
+				png: Buffer.from(encode(chunks)).toString("base64"),
 			};
 		}
 
